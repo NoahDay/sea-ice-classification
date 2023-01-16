@@ -21,6 +21,7 @@ close all
 
 %%
 addpath functions
+addpath data
 addpath /Users/noahday/GitHub/CICE-analyser/processing
 
 historydir = '/Volumes/NoahDay5TB/WIM_on/history/fullyears/';
@@ -46,13 +47,13 @@ var_list = {'aice','hi','hs','fsdrad','sice','iage','vlvl','vrdg'};
 
 [X_raw, row_idx]= read_data_vec(filenames,sector,var_list); % [var_list, lon, lat]
 
-%clear X_temp
+%% clear X_temp
 label_vec = variable_dict(var_list);
 size(X_raw)
 %
 
 %label_vec = variable_dict(var_list);
-%
+%%
 data.Xunstandard = X_raw;
 data.row_idx = row_idx;
 save_filename = strcat('cover_5percent_2015-19.mat');

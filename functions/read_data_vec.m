@@ -19,6 +19,7 @@ function [X_total, idx] = read_data_vec(filenames,sector,var_list)
     X_total = [];
     for j = 1:nfiles % Each file
         filename = filenames(j,:);
+        print(filename)
         [aice, sector_mask] = data_format_sector(filename,"aice",sector);
         ice_mask = aice > SIC_threshold;
         X_temp = [];
@@ -117,7 +118,7 @@ function [X_total, idx] = read_data_vec(filenames,sector,var_list)
                     for jj = 1:wid
                         if aice(ii,jj) > SIC_threshold
                             temp_fsd(:) = temp(ii,jj,:);
-                            temp2(ii,jj) =  sum((temp_fsd./aice(ii,jj)).*NFSD');
+                            temp2(ii,jj) =  sum((temp_fsd./aice(ii,jj)).*floe_binwidth);
                         else
                             temp2(ii,jj) =  NaN;
                         end
@@ -132,7 +133,7 @@ function [X_total, idx] = read_data_vec(filenames,sector,var_list)
                     for jj = 1:wid
                         if aice(ii,jj) > SIC_threshold
                             temp_fsd(:) = temp(ii,jj,:);
-                            temp2(ii,jj) =  sum((temp_fsd./aice(ii,jj)).*NFSD');
+                            temp2(ii,jj) =  sum((temp_fsd./aice(ii,jj)).*floe_binwidth);
                         else
                             temp2(ii,jj) =  NaN;
                         end
@@ -147,7 +148,7 @@ function [X_total, idx] = read_data_vec(filenames,sector,var_list)
                     for jj = 1:wid
                         if aice(ii,jj) > SIC_threshold
                             temp_fsd(:) = temp(ii,jj,:);
-                            temp2(ii,jj) =  sum((temp_fsd./aice(ii,jj)).*NFSD');
+                            temp2(ii,jj) =  sum((temp_fsd./aice(ii,jj)).*floe_binwidth);
                         else
                             temp2(ii,jj) =  NaN;
                         end
@@ -162,7 +163,7 @@ function [X_total, idx] = read_data_vec(filenames,sector,var_list)
                     for jj = 1:wid
                         if aice(ii,jj) > SIC_threshold
                             temp_fsd(:) = temp(ii,jj,:);
-                            temp2(ii,jj) =  sum((temp_fsd./aice(ii,jj)).*NFSD');
+                            temp2(ii,jj) =  sum((temp_fsd./aice(ii,jj)).*floe_binwidth);
                         else
                             temp2(ii,jj) =  NaN;
                         end
@@ -177,7 +178,7 @@ function [X_total, idx] = read_data_vec(filenames,sector,var_list)
                     for jj = 1:wid
                         if aice(ii,jj) > SIC_threshold
                             temp_fsd(:) = temp(ii,jj,:);
-                            temp2(ii,jj) =  sum((temp_fsd./aice(ii,jj)).*NFSD');
+                            temp2(ii,jj) =  sum((temp_fsd./aice(ii,jj)).*floe_binwidth);
                         else
                             temp2(ii,jj) =  NaN;
                         end

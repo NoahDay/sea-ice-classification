@@ -11,7 +11,7 @@
 clear all
 clc
 close all
-
+addpath functions
 addpath /Users/noahday/Github/cice-plotting-tools/functions
 addpath /Users/noahday/GitHub/CICE-analyser/processing
 
@@ -30,7 +30,9 @@ end
 clc
 sector = "SH";
 close all
-var_list = {'aice','hi','hs','fsdrad','sice','iage','vlvl','vrdg'};
+var_type = "dynamics";
+var_list = variable_list(var_type);
+%var_list = {'aice','hi','hs','fsdrad','sice','iage','vlvl','vrdg'};
     % Static: {'aice','hi','hs','fsdrad','sice','iage','vlvl','vrdg'}
     % Dynamics: {'aice','hi','hs','fsdrad','sice','iage','vlvl','vrdg', 
     %            'uvel','vvel','strength','divu','shear','daidtd','daidtt',
@@ -45,14 +47,14 @@ save_data = 1; % On = 1
 if save_data
     data.Xunstandard = X_raw;
     data.row_idx = row_idx;
-    save_filename = strcat('cover_5percent_2015-19.mat');
+    save_filename = strcat(var_type,'_5percent_2015-19.mat');
     save(save_filename,'data','-v7.3');
     clear data
 end
 
 %% Clean the data
 clear Xnan_temp 
-load('data/cover_5percent_2015-19.mat')
+load('data/dynamics_5percent_2015-19.mat')
 SIC = 0.15;
 [~,wid,dep] = size(data.Xunstandard);
 X_temp = data.Xunstandard;%X_raw;
@@ -130,7 +132,7 @@ aice_idx = X_standard_all(:,1)>0.15;
 X = X_standard_all(:,1:end-2);
 %X = X_standard_all(:,[1:3 5:end-2]);
 %
-num_clusters = 4;
+num_clusters = 3;
 tic
 [kmeans_idx,C] = kmeans(X,num_clusters,'MaxIter',300);
 toc
