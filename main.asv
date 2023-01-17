@@ -137,15 +137,9 @@ tic
 [kmeans_idx,C] = kmeans(X,num_clusters,'MaxIter',300);
 toc
 
-kmeans_cluster.idx = idx;
-kmeans_cluster.row_idx = row_idx;
-kmeans_cluster.label_vec = label_vec;
-kmeans_cluster.C = C;
-kmeans_cluster.X_standard_all = X_standard_all;
-kmeans_cluster.num_clusters = num_clusters;
-
 save_filename = strcat('kmeans_3cases_',var_type,sprintf('%g',num_clusters),'_classes.mat');
-save(save_filename,'kmeans_cluster','-v7.3');
+% save(save_filename,'kmeans_cluster','-v7.3');
+save(save_filename,'data','-v7.3');
 
 %% Average stats
 %Xnan = Xnan(aice_idx,:);

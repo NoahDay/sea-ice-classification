@@ -55,15 +55,12 @@ function [MIZ_width, class,MIZ] = calculate_miz_width(filename,sector,k_means,mi
             MIZ_width(i,1:2) = MIZ_distance(1:2);
 
             for j = south_point:north_point
-                % Calculate the histogram P_z dz.
-                temp(j,1:2) = aice(i,j).*pathdist([ulat_vec_temp(j-1),ulat_vec_temp(j)],[ulon_vec_temp(j-1),ulon_vec_temp(j)],'km');
+                % x_e = \int_0 ^x P_z dz.
+                 = pathdist([ulat_vec_temp(j-1),ulat_vec_temp(j)],[ulon_vec_temp(j-1),ulon_vec_temp(j)],'km').*aice(i,j);
             end
-            % Integrate over, x_e = \int_0 ^x P_z dz.
-            MIZ_width_corrected(i,1) = sum(temp(:,2));
 
         end
     end
     MIZ_width = MIZ_width(:,2);
-   %MIZ_width = MIZ_width_corrected;
 end
 
