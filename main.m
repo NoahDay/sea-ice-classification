@@ -8,7 +8,7 @@
 % 4. All of the terms
 
 %% Setup
-clear all
+%clear all
 clc
 close all
 addpath functions
@@ -32,6 +32,8 @@ sector = "SH";
 close all
 var_type = "dynamics";
 var_list = variable_list(var_type);
+
+%% 
 %var_list = {'aice','hi','hs','fsdrad','sice','iage','vlvl','vrdg'};
     % Static: {'aice','hi','hs','fsdrad','sice','iage','vlvl','vrdg'}
     % Dynamics: {'aice','hi','hs','fsdrad','sice','iage','vlvl','vrdg', 
