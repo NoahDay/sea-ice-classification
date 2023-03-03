@@ -30,7 +30,7 @@ end
 clc
 sector = "SH";
 close all
-var_type = "dynamics";
+var_type = "static";
 var_list = variable_list(var_type);
 
 %% 
@@ -138,8 +138,10 @@ num_clusters = 3;
 tic
 [kmeans_idx,C] = kmeans(X,num_clusters,'MaxIter',300);
 toc
+%%
+label_vec = variable_dict(var_list);
 
-kmeans_cluster.idx = idx;
+kmeans_cluster.idx = kmeans_idx;
 kmeans_cluster.row_idx = row_idx;
 kmeans_cluster.label_vec = label_vec;
 kmeans_cluster.C = C;
