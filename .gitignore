@@ -5,3 +5,5 @@
 *.pdf
 *.nc
 *.bin
+*.eps
+*.fig

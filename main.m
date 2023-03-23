@@ -30,7 +30,7 @@ end
 clc
 sector = "SH";
 close all
-var_type = "static";
+var_type = "dynamics";
 var_list = variable_list(var_type);
 
 %% 
@@ -101,6 +101,9 @@ clear cleaned_data
 
 
 %% Standardise the data
+% Taking just the last year
+%row_idx(1826-365:end);
+Xnan = Xnan(sum(row_idx(1:1826-365)):end,:);
 X_standard_all = Xnan;
 [~,wid] = size(X_standard_all);
 
@@ -170,9 +173,352 @@ for i = 1:num_clusters
 end
 
 
+%% Silhouette test
+
+X = X_standard_all(1:100000:end,1:8);%end-2);
+
+%
+
+close all
+conFigure(8,3)
+f = figure;
+tiledlayout(1,4)
+for i = 2:5
+    nexttile
+    [kmeans_idx,C] = kmeans(X,i,'MaxIter',300);
+    S = silhouette(X,kmeans_idx);
+    silhouette(X,kmeans_idx)
+    xline(mean(S),'--')
+end
+
+exportgraphics(f,'sil_matrix.png','ContentType','image')
+%% Feature selection - forward selection
+X = X_standard_all(1:10000:end,1:end-2);
+[len, n_total] = size(X);
+X_all = X;
+var_all = var_list;
+label_all = label_vec;
+X_opt = [];
+var_opt = {};
+label_opt = {};
+nvar_added = 0;
+silhouette_score_n = [];
+for nvar = 1:n_total-1
+    % Search to find the variable with the best fit
+    n_search = n_total;
+    [~, nvar_added] = size(X_opt);
+    for i = 2:n_search - nvar_added
+        % Grab a variable
+        X_vec = X_all(:,i);
+        % Add that to the dataset
+        X_temp = [X_opt X_vec];
+        [kmeans_idx,C] = kmeans(X_temp,i,'MaxIter',300);
+        silhouette_score(i) = mean(silhouette(X,kmeans_idx));
+    end
+    maxloc = find(max(silhouette_score)==silhouette_score);
+    X_opt = [X_opt  X_all(:,maxloc)];
+    X_all(:,maxloc) = [];
+    var_opt(end+1) = var_all(maxloc);
+    var_all(maxloc) = [];
+    label_opt(end+1) = label_all(maxloc);
+    label_all(maxloc) = [];
+    silhouette_score_n(nvar)= max(silhouette_score);
+    
+end
+
+%% Feature selection - forward selection
+% https://medium.com/analytics-vidhya/k-means-algorithm-in-4-parts-4-4-42bc6c781e46
+clc
+row_cumsum = cumsum(row_idx);
+X = X_standard_all(row_cumsum(end-180):row_cumsum(end-179),1:7);
+%X = X_standard_all(1:100:end,1:7); %1:end-2);
+[len, n_total] = size(X);
+
+
+var_opt = {};
+label_opt = {};
+
+silhouette_score_n = [];
+selected_variables = {};
+
+maxvars = 7; % Maximum number of variables retained
+kmin = 2; % Minimum number of clusters
+kmax = 5; % Maximum number of clusters
+for k = kmin:kmax
+    % Calculate the silhouette score for each variable
+    X_all = X;
+    var_all = var_list;
+    label_all = label_vec;
+    X_temp = [];
+    X_opt = [];
+    nvar_added = 0;
+    for i = 1:maxvars
+        % Search to find the variable with the best fit
+        maxloc = [];
+        silhouette_score = [];
+        for j = 1:n_total - nvar_added
+            % Grab a variable
+            X_vec = X_all(:,j);
+            % Add that to the dataset
+            X_temp = [X_opt X_vec];
+            [kmeans_idx,C] = kmeans(X_temp,k,'MaxIter',300);
+            silhouette_score(j) = mean(silhouette(X_temp,kmeans_idx));
+        end
+        maxloc = find(max(silhouette_score)==silhouette_score);
+        X_opt = [X_opt  X_all(:,maxloc)];
+        X_all(:,maxloc) = [];
+        var_opt(k,i) = var_all(maxloc);
+        var_all(maxloc) = [];
+        selected_variables(k,i) = label_all(maxloc);
+        label_all(maxloc) = [];
+        silhouette_score_n(k,i)= max(silhouette_score);
+
+        nvar_added = nvar_added + 1;
+    end
+end
+silhouette_score_n
+selected_variables
+%
+close all
+conFigure(11,1)
+f = figure;
+plot(1:length(silhouette_score_n(3,:)), silhouette_score_n(3,:))
+set(gca,'xtick',1:length(silhouette_score_n))
+set(gca,'xticklabel',selected_variables(3,:))
+ylabel('Silhouette score')
+ylim([0,1])
+
+exportgraphics(f,'sil_score_summer.png','ContentType','image')
+
+%%
+
+close all
+conFigure(8,3)
+f = figure;
+tiledlayout(1,4)
+for k = 2:5
+    nexttile
+    [kmeans_idx,C] = kmeans(X(:,:),k,'MaxIter',300);
+    silhouette(X,kmeans_idx)
+    xline(mean(S),'--')
+end
+
+exportgraphics(f,'sil_matrix.png','ContentType','image')
+
+%% PCA
+close all
+X = X_standard_all(1:100:end,1:7);
+row_cumsum = cumsum(row_idx);
+X = X_standard_all(row_cumsum(end-1):row_cumsum(end),1:7);
+
+%coeff = pca(X);
+[coeff,score,latent,tsquared,explained,mu] = pca(X);
+
+conFigure(11,1)
+f = figure;
+b = bar(explained);
+ylabel('Total variance explained [$\%$]')
+xlabel 'Principal component'
+matlab2tikz('pca_var_explained_summer.tex', 'standalone', true);
+
+label_vec_tmp = label_vec(1:7);
+%label_vec_tmp(8) = [];
+conFigure(11,1)
+f = figure;
+b = bar(coeff(:,1).^2);
+ylabel('Weighting for PC1 [-]')
+xticks(1:length(label_vec_tmp))
+ set(gca,'xticklabel',label_vec_tmp)
+ [len wid] = size(X);
+ yline((1/wid),'--')
+
+exportgraphics(f,'pca1_loadings.png','ContentType','image')
+addpath /Users/noahday/Documents/MATLAB/matlab2tikz/src/
+matlab2tikz('pca_loadings1_summer.tex', 'standalone', true);
+
+
+
+conFigure(11,1)
+f = figure;
+b = bar(coeff(:,2).^2);
+ylabel('Weighting for PC2 [-]')
+xticks(1:length(label_vec_tmp))
+ set(gca,'xticklabel',label_vec_tmp)
+ yline((1/wid),'--')
+
+exportgraphics(f,'pca2_loadings.png','ContentType','image')
+matlab2tikz('pca_loadings2_summer.tex', 'standalone', true);
+%% PCA total, summer, winter
+% Winter  = June, July, August
+% Summer = Jan, Feb, March
+close all
+
+winter_start = 1826-213; % 1st June
+winter_end = 1826-122; % 31 August
+
+summer_start = 1826-364; % 1st Jan
+summer_end = 1826-275; % 31 March
+
+
+
+row_cumsum = cumsum(row_idx);
+
+
+
+% TOTAL
+X = X_standard_all(row_cumsum(summer_start):end,1:7);
+
+%coeff = pca(X);
+[coeff,score,latent,tsquared,explained,mu] = pca(X);
+
+conFigure(11,1)
+f = figure;
+b = bar(explained);
+ylabel('Total variance explained [$\%$]')
+xlabel 'Principal component'
+matlab2tikz('pca_var_explained_total.tex', 'standalone', true);
+exportgraphics(f,'pca_var_explained_total.png','ContentType','image')
+
+label_vec_tmp = label_vec(1:7);
+%label_vec_tmp(8) = [];
+conFigure(11,1)
+f = figure;
+b = bar(coeff(:,1).^2);
+ylabel('Weighting for PC1 [-]')
+xticks(1:length(label_vec_tmp))
+ set(gca,'xticklabel',label_vec_tmp)
+ [len wid] = size(X);
+ yline((1/wid),'--')
+
+exportgraphics(f,'pca1_loadings.png','ContentType','image')
+addpath /Users/noahday/Documents/MATLAB/matlab2tikz/src/
+matlab2tikz('pca_loadings1_total.tex', 'standalone', true);
+
+% SUMMER
+X = X_standard_all(row_cumsum(summer_start):row_cumsum(summer_end),1:7);
+
+%coeff = pca(X);
+[coeff,score,latent,tsquared,explained,mu] = pca(X);
+close all
+conFigure(11,1)
+f = figure;
+b = bar(explained);
+ylabel('Total variance explained [$\%$]')
+xlabel 'Principal component'
+matlab2tikz('pca_var_explained_summer.tex', 'standalone', true);
+exportgraphics(f,'pca_var_explained_summer.png','ContentType','image')
+
+label_vec_tmp = label_vec(1:7);
+%label_vec_tmp(8) = [];
+conFigure(11,1)
+f = figure;
+b = bar(coeff(:,1).^2);
+ylabel('Weighting for PC1 [-]')
+xticks(1:length(label_vec_tmp))
+ set(gca,'xticklabel',label_vec_tmp)
+ [len wid] = size(X);
+ yline((1/wid),'--')
+
+exportgraphics(f,'pca1_loadings_summer.png','ContentType','image')
+addpath /Users/noahday/Documents/MATLAB/matlab2tikz/src/
+matlab2tikz('pca_loadings1_summer.tex', 'standalone', true);
+
+
+% WINTER
+X = X_standard_all(row_cumsum(winter_start):row_cumsum(winter_end),1:7);
+
+%coeff = pca(X);
+[coeff,score,latent,tsquared,explained,mu] = pca(X);
+
+conFigure(11,1)
+f = figure;
+b = bar(explained);
+ylabel('Total variance explained [$\%$]')
+xlabel 'Principal component'
+matlab2tikz('pca_var_explained_winter.tex', 'standalone', true);
+exportgraphics(f,'pca_var_explained_winter.png','ContentType','image')
+
+label_vec_tmp = label_vec(1:7);
+%label_vec_tmp(8) = [];
+conFigure(11,1)
+f = figure;
+b = bar(coeff(:,1).^2);
+ylabel('Weighting for PC1 [-]')
+xticks(1:length(label_vec_tmp))
+ set(gca,'xticklabel',label_vec_tmp)
+ [len wid] = size(X);
+ yline((1/wid),'--')
+
+exportgraphics(f,'pca1_loadings_winter.png','ContentType','image')
+addpath /Users/noahday/Documents/MATLAB/matlab2tikz/src/
+matlab2tikz('pca_loadings1_winter.tex', 'standalone', true);
 
 
 
 
+%%
+rng(0,'twister'); % For reproducibility
+N = 100;
+X = rand(N,20);
+y = -ones(N,1);
+y(X(:,3).*X(:,9)./X(:,15) < 0.4) = 1;
 
+mdl = fscnca(X,y,'Solver','sgd','Verbose',1);
+
+
+%%
+
+for i = 1:wid
+    X_temp = X(:,i);
+    [kmeans_idx,C] = kmeans(X_temp,i,'MaxIter',300);
+    silhouette_score(i) = mean(silhouette(X,kmeans_idx));
+end
+silhouette_score
+% Add hs
+for i = [1 3 4 5 6 7 8]
+    if i < 2
+        X_temp = X(:,[i 2]);
+        [kmeans_idx,C] = kmeans(X_temp,i,'MaxIter',300);
+        silhouette_score(i) = mean(silhouette(X,kmeans_idx));
+    else
+        X_temp = X(:,[2 i]);
+        [kmeans_idx,C] = kmeans(X_temp,i,'MaxIter',300);
+        silhouette_score(i) = mean(silhouette(X,kmeans_idx));
+    end
+end
+silhouette_score
+% Add fsdrad
+for i = [1 3 5 6 7 8]
+    if i < 2
+        X_temp = X(:,[i 2 4]);
+        [kmeans_idx,C] = kmeans(X_temp,i,'MaxIter',300);
+        silhouette_score(i) = mean(silhouette(X,kmeans_idx));
+    elseif i == 3 
+        X_temp = X(:,[2 i 4]);
+        [kmeans_idx,C] = kmeans(X_temp,i,'MaxIter',300);
+        silhouette_score(i) = mean(silhouette(X,kmeans_idx));
+    else
+        X_temp = X(:,[2 4 i]);
+        [kmeans_idx,C] = kmeans(X_temp,i,'MaxIter',300);
+        silhouette_score(i) = mean(silhouette(X,kmeans_idx));
+    end
+end
+var_list
+silhouette_score
+
+%%
+label_vec
+
+close all
+figure
+plot(X(:,2),X(:,8),'o')
+%corr(X(:,6),X(:,16))
+
+%%
+rng('default')  % For reproducibility
+X = [randn(10,2)+3;randn(10,2)-3];
+scatter(X(:,1),X(:,2));
+title('Randomly Generated Data');
+clust = kmeans(X,2);
+silhouette(X,clust)
 
