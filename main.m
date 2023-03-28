@@ -174,26 +174,78 @@ end
 
 
 %% Silhouette test
-
-X = X_standard_all(1:100000:end,1:8);%end-2);
+[len, wid] = size(X_standard_all);
+rand_vec = randsample(1:len,100000);
+X = X_standard_all(rand_vec,1:7);%end-2);
 
 %
 
+nIDs = 5;
+alphabet = ('a':'z').';
+chars = num2cell(alphabet(1:nIDs));
+chars = chars.';
+charlbl = strcat('(',chars,')'); % {'(a)','(b)','(c)','(d)'}
+%text(0.025,0.95,charlbl{1},'Units','normalized')
+
 close all
-conFigure(8,3)
+conFigure(15)
+
 f = figure;
-tiledlayout(1,4)
+set(gcf, 'Position',  [0, 0, 50, 30])
+tiledlayout(2,4)
+nexttile_vec = [1 2 5 6];
 for i = 2:5
-    nexttile
-    [kmeans_idx,C] = kmeans(X,i,'MaxIter',300);
+    nexttile(nexttile_vec(i-1))
+    [kmeans_idx,C,sumd,D] = kmeans(X,i,'MaxIter',300);
     S = silhouette(X,kmeans_idx);
     silhouette(X,kmeans_idx)
     xline(mean(S),'--')
+    %title(sprintf('%g clusters',i))
+    [len, wid] = size(D);
+    for j = 1:wid
+        std_tmp = std(D(:,j));
+    end
+    std_vec(i) = mean(std_tmp);
+    text(0.025,0.9,charlbl{i-1},'Units','normalized')
 end
+nexttile([2 2]);
+plot(2:5,std_vec(2:end),'-o')
+%
 
+
+text(0.025,0.95,charlbl{5},'Units','normalized')
+ylim([0,0.5])
+xlabel('Number of clusters, $k$')
+ylabel('Standard deviation')
+
+matlab2tikz('sil_matrix.tex', 'standalone', true);
 exportgraphics(f,'sil_matrix.png','ContentType','image')
+%% Euclidean distance standard deviation
+clc
+X = X_standard_all(1:100:end,1:8);
+clear std_vec
+for i = 2:5
+    [kmeans_idx,C,sumd,D] = kmeans(X,i,'MaxIter',300);
+    [len, wid] = size(D);
+    for j = 1:wid
+        std_tmp = std(D(:,j));
+    end
+    std_vec(i) = mean(std_tmp);
+end
+%%
+close all
+f = figure;
+plot(2:5,std_vec(2:end),'-o')
+xlabel('Number of clusters, $k$')
+ylabel('Mean standard deviation within clusters')
+exportgraphics(f,'mean_std_cover.png','ContentType','image')
+
 %% Feature selection - forward selection
-X = X_standard_all(1:10000:end,1:end-2);
+%X = X_standard_all(1:10000:end,1:end-2);
+[len, wid] = size(X_standard_all);
+rand_vec = randsample(1:len,10000);
+X = X_standard_all(rand_vec,1:7);%end-2);
+
 [len, n_total] = size(X);
 X_all = X;
 var_all = var_list;
@@ -230,10 +282,13 @@ end
 % https://medium.com/analytics-vidhya/k-means-algorithm-in-4-parts-4-4-42bc6c781e46
 clc
 row_cumsum = cumsum(row_idx);
-X = X_standard_all(row_cumsum(end-180):row_cumsum(end-179),1:7);
+%X = X_standard_all(row_cumsum(end-180):row_cumsum(end-179),1:7);
 %X = X_standard_all(1:100:end,1:7); %1:end-2);
 [len, n_total] = size(X);
 
+[len, wid] = size(X_standard_all);
+rand_vec = randsample(1:len,10000);
+X = X_standard_all(rand_vec,1:7);%end-2);
 
 var_opt = {};
 label_opt = {};
@@ -453,9 +508,95 @@ exportgraphics(f,'pca1_loadings_winter.png','ContentType','image')
 addpath /Users/noahday/Documents/MATLAB/matlab2tikz/src/
 matlab2tikz('pca_loadings1_winter.tex', 'standalone', true);
 
+%% All
+X = X_standard_all(row_cumsum(summer_start):end,1:7);
+[coeff_total,score,latent,tsquared,explained_total,mu] = pca(X);
+
+X = X_standard_all(row_cumsum(summer_start):row_cumsum(summer_end),1:7);
+[coeff_summer,score,latent,tsquared,explained_summer,mu] = pca(X);
+
+X = X_standard_all(row_cumsum(winter_start):row_cumsum(winter_end),1:7);
+[coeff_winter,score,latent,tsquared,explained_winter,mu] = pca(X);
+
+plot_data = [explained_total'; explained_summer'; explained_winter']';
+
+cmap_bar = ["#1c9099"; "#fdbb84"; "#bcbddc"];
+close all
+conFigure(11,1)
+f = figure;
+b = bar(plot_data);
+ylabel('Total variance explained [$\%$]')
+xlabel 'Principal component'
+legend('Full year','Summer','Winter')
+%colormap(cmap_bar)
+b(1).FaceColor = cmap_bar(1,:);
+b(2).FaceColor = cmap_bar(2,:);
+b(3).FaceColor = cmap_bar(3,:);
+%
+addpath /Users/noahday/Documents/MATLAB/matlab2tikz/src/
+matlab2tikz('pca_var_explained_all.tex', 'standalone', true);
+exportgraphics(f,'pca_var_explained_all.png','ContentType','image')
 
 
+plot_coeff_all = [coeff_total(:,1).^2  coeff_summer(:,1).^2 coeff_winter(:,1).^2];
+label_vec_tmp = label_vec(1:7);
+conFigure(11,1)
+f = figure;
+b = bar(plot_coeff_all);
+b(1).FaceColor = cmap_bar(1,:);
+b(2).FaceColor = cmap_bar(2,:);
+b(3).FaceColor = cmap_bar(3,:);
+ylabel('Weighting for PC1 [-]')
+xticks(1:length(label_vec_tmp))
+ set(gca,'xticklabel',label_vec_tmp)
+ [len wid] = size(X);
+ 
+legend('Full year','Summer','Winter')
+exportgraphics(f,'pca1_loadings_all.png','ContentType','image')
+matlab2tikz('pca1_loadings_all.tex', 'standalone', true);
 
+%%
+
+nIDs = 4;
+alphabet = ('a':'z').';
+chars = num2cell(alphabet(1:nIDs));
+chars = chars.';
+charlbl = strcat('(',chars,')'); % {'(a)','(b)','(c)','(d)'}
+%text(0.025,0.95,charlbl{1},'Units','normalized')
+
+conFigure(30)
+close all
+%conFigure(15,2)
+f = figure;
+set(gcf, 'Position',  [100, 100, 500, 400])
+tiledlayout(1,2)
+nexttile
+b = bar(plot_data);
+ylabel('Variance explained [$\%$]')
+xlabel 'Principal component'
+
+b(1).FaceColor = cmap_bar(1,:);
+b(2).FaceColor = cmap_bar(2,:);
+b(3).FaceColor = cmap_bar(3,:);
+text(0.025,0.95,charlbl{1},'Units','normalized')
+
+nexttile
+
+b = bar(plot_coeff_all);
+yline((1/wid),'--','HandleVisibility','off')
+b(1).FaceColor = cmap_bar(1,:);
+b(2).FaceColor = cmap_bar(2,:);
+b(3).FaceColor = cmap_bar(3,:);
+ylabel('PC1 weighting [-]')
+xticks(1:length(label_vec_tmp))
+ set(gca,'xticklabel',label_vec_tmp)
+ [len wid] = size(X);
+ 
+ legend('Full year','Summer','Winter')
+ text(0.025,0.95,charlbl{2},'Units','normalized')
+
+ exportgraphics(f,'pca_analysis.png','ContentType','image')
+matlab2tikz('pca_analysis.tex', 'standalone', true);
 %%
 rng(0,'twister'); % For reproducibility
 N = 100;
