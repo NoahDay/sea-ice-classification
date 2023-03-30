@@ -16,7 +16,7 @@ r = T.fsdrad;
 
 clear T
 %
-date_idx = date == datetime('2002-08-01');
+date_idx = date == datetime('2002-04-01');
 lon = lon(date_idx);
 lat = lat(date_idx);
 k = k(date_idx);
@@ -38,13 +38,13 @@ end
 cd /Users/noahday/GitHub/sea-ice-classification/
 %%
 close all
-%kmeans_plot = ones(size(LN))*NaN;
-%kmeans_plot(aice>0.15) = k_means(aice>0.15);
+kmeans_plot = ones(size(LN))*NaN;
+kmeans_plot(aice>0.15) = k_means(aice>0.15);
 figure
 w = worldmap('world');
         axesm eqaazim; %, eqaazim eqdazim vperspec, eqdazim flips the x-axis, and y-axis to eqaazim. cassini
         setm(w, 'Origin', [-90 0 0]);
-        setm(w, 'maplatlimit', [-90,-50]);
+        setm(w, 'maplatlimit', [-90,-65]);
         setm(w, 'grid', 'off');
         setm(w, 'frame', 'off');
         setm(w, "FontColor",[0.5, 0.5, 0.5])
@@ -53,10 +53,11 @@ w = worldmap('world');
         %setm(w, 'parallellabel', 'off','FontSize',font_size)
         setm(w, 'mlabellocation', 60);
         setm(w, 'plabellocation', 5);
-        pcolorm(LT,LN,k_means,'FaceAlpha',0.99)
+        pcolorm(LT,LN,kmeans_plot,'FaceAlpha',0.99)
         land = shaperead('landareas', 'UseGeoCoords', true);
         geoshow(w, land, 'FaceColor', [0.5 0.5 0.5],'FaceAlpha',.5)
         colorbar; %cmocean('deep');
+         scalebar('length',500,'location','se')
 %%
 figure
 w = worldmap('world');
@@ -93,6 +94,12 @@ w = worldmap('world');
         land = shaperead('landareas', 'UseGeoCoords', true);
         geoshow(w, land, 'FaceColor', [0.5 0.5 0.5],'FaceAlpha',.5)
         colorbar; %cmocean('deep');
+%%
+pathname = '/Users/noahday/Gadi/ia40/waves-025/kmeans_2023-03-30.nc';
+ncdisp(pathname)
+kmeans_data = ncread(pathname,'k');
+lon_k = ncread(pathname,'TLON');
+size(kmeans_data)
  %%
 x = [12 24 36];
 cpu_time = [1.66 1.5 2.2];
