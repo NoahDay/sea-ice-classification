@@ -246,12 +246,12 @@ ylabel('Count')
 %%
 clc
 sic_idx = [1 1 1 1 1 1 0];
-miz_idx = [0 1 1 0 0 0 1 1 1 0 0];
+miz_idx = [0 1 1 0 1 1 0];
 
 
-diff_idx = diff(miz_idx);
-temp = find(diff_idx == 1);
-inner_miz = temp(end) +1
+diff_idx = diff(miz_idx)
+temp = find(diff_idx == -1);
+inner_miz = temp(end)
 temp = find(miz_idx == 1);
 outer_miz = temp(end)
 
