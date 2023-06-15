@@ -27,28 +27,27 @@ at={(0.563in,0.476in)},
 scale only axis,
 bar shift auto,
 xmin=-0.2,
-xmax=8.2,
-xtick={1, 2, 3, 4, 5, 6, 7},
+xmax=7.2,
+xtick={1, 2, 3, 4, 5, 6},
 xlabel style={font=\color{white!15!black}},
 xlabel={Principal component},
 ymin=0,
-ymax=50,
+ymax=60,
 ylabel style={font=\color{white!15!black}},
 ylabel={Total variance explained [$\%$]},
 axis background/.style={fill=white}
 ]
 \addplot[ybar, bar width=0.8, fill=mycolor1, draw=black, area legend] table[row sep=crcr] {%
-1	48.744077023425\\
-2	22.8973285055946\\
-3	17.6114791437506\\
-4	5.84354467219629\\
-5	2.3164642060038\\
-6	1.94479284762527\\
-7	0.642313601404453\\
+1	58.2171850877948\\
+2	27.7354875985061\\
+3	10.2532798234614\\
+4	2.03955633643819\\
+5	1.30567499258587\\
+6	0.448816161213705\\
 };
 \addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
 -0.2	0\\
-8.2	0\\
+7.2	0\\
 };
 \end{axis}
 \end{tikzpicture}%
