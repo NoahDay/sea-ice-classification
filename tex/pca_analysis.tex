@@ -1,0 +1,157 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\documentclass[tikz]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\usepackage{grffile}
+\pgfplotsset{compat=newest}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{arrows.meta}
+\usepgfplotslibrary{patchplots}
+\usepackage{amsmath}
+
+\begin{document}
+\definecolor{mycolor1}{rgb}{0.10980,0.56471,0.60000}%
+\definecolor{mycolor2}{rgb}{0.99216,0.73333,0.51765}%
+\definecolor{mycolor3}{rgb}{0.73725,0.74118,0.86275}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=8.417in,
+height=8.197in,
+at={(1.389in,2.029in)},
+scale only axis,
+bar shift auto,
+clip=false,
+xmin=0.511111111111111,
+xmax=6.48888888888889,
+xtick={1, 2, 3, 4, 5, 6},
+xlabel style={font=\color{white!15!black}},
+xlabel={Principal component},
+ymin=0,
+ymax=80,
+ylabel style={font=\color{white!15!black}},
+ylabel={Variance explained [$\%$]},
+axis background/.style={fill=white},
+legend style={legend cell align=left, align=left, draw=white!15!black}
+]
+\addplot[ybar, bar width=0.178, fill=mycolor1, draw=black, area legend] table[row sep=crcr] {%
+1	56.8895292818668\\
+2	28.7545794302599\\
+3	11.082449913194\\
+4	1.56972744417612\\
+5	1.26030023017572\\
+6	0.443413700327365\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0.511111111111111	0\\
+6.48888888888889	0\\
+};
+\addlegendentry{Full year}
+
+\addplot[ybar, bar width=0.178, fill=mycolor2, draw=black, area legend] table[row sep=crcr] {%
+1	63.1892433888376\\
+2	20.2482613265304\\
+3	12.7399356737794\\
+4	1.96596150693598\\
+5	1.41986451006367\\
+6	0.436733593852887\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0.511111111111111	0\\
+6.48888888888889	0\\
+};
+\addlegendentry{Summer}
+
+\addplot[ybar, bar width=0.178, fill=mycolor3, draw=black, area legend] table[row sep=crcr] {%
+1	74.0418898334342\\
+2	17.620939706583\\
+3	5.88456870583794\\
+4	1.48308460670929\\
+5	0.550542923743347\\
+6	0.418974223692274\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0.511111111111111	0\\
+6.48888888888889	0\\
+};
+\addlegendentry{Winter}
+
+\node[right, align=left, inner sep=0]
+at (rel axis cs:0.025,0.95) {(a)};
+\end{axis}
+
+\begin{axis}[%
+width=8.417in,
+height=8.197in,
+at={(11.194in,2.029in)},
+scale only axis,
+bar shift auto,
+clip=false,
+xmin=0.511111111111111,
+xmax=6.48888888888889,
+xtick={1,2,3,4,5,6},
+xticklabels={{SIC},{Ice thickness},{Snow thickness},{Floe size},{Age},{Level ice}},
+xticklabel style={rotate=30},
+ymin=0,
+ymax=1,
+ylabel style={font=\color{white!15!black}},
+ylabel={PC1 weighting [-]},
+axis background/.style={fill=white}
+]
+\addplot[ybar, bar width=0.178, fill=mycolor1, draw=black, area legend] table[row sep=crcr] {%
+1	0.0161408709529594\\
+2	0.0483556104787079\\
+3	0.0293242304197236\\
+4	0.888450519298808\\
+5	0.00459518068846318\\
+6	0.0131335881613385\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0.511111111111111	0\\
+6.48888888888889	0\\
+};
+\addplot[ybar, bar width=0.178, fill=mycolor2, draw=black, area legend] table[row sep=crcr] {%
+1	0.254440560980847\\
+2	0.0141111423654091\\
+3	0.00522278094461455\\
+4	0.60369400867927\\
+5	0.000735517352787437\\
+6	0.121795989677072\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0.511111111111111	0\\
+6.48888888888889	0\\
+};
+\addplot[ybar, bar width=0.178, fill=mycolor3, draw=black, area legend] table[row sep=crcr] {%
+1	0.00871482198499764\\
+2	0.0436829750816358\\
+3	0.0221365546124759\\
+4	0.906605833266\\
+5	0.00436577433720115\\
+6	0.0144940407176902\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0.511111111111111	0\\
+6.48888888888889	0\\
+};
+
+\addplot[area legend, dashed, draw=black, fill=white!80!black, fill opacity=0.2, forget plot]
+table[row sep=crcr] {%
+x	y\\
+0.511111111111111	0\\
+6.48888888888889	0\\
+6.48888888888889	0.166666666666667\\
+0.511111111111111	0.166666666666667\\
+}--cycle;
+\node[right, align=left, inner sep=0]
+at (rel axis cs:0.025,0.95) {(b)};
+\end{axis}
+\end{tikzpicture}%
+\end{document}

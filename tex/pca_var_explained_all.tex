@@ -1,0 +1,90 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\documentclass[tikz]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\usepackage{grffile}
+\pgfplotsset{compat=newest}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{arrows.meta}
+\usepgfplotslibrary{patchplots}
+\usepackage{amsmath}
+
+\begin{document}
+\definecolor{mycolor1}{rgb}{0.10980,0.56471,0.60000}%
+\definecolor{mycolor2}{rgb}{0.99216,0.73333,0.51765}%
+\definecolor{mycolor3}{rgb}{0.73725,0.74118,0.86275}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=3.356in,
+height=3.53in,
+at={(0.563in,0.476in)},
+scale only axis,
+bar shift auto,
+xmin=0.511111111111111,
+xmax=7.48888888888889,
+xtick={1, 2, 3, 4, 5, 6, 7},
+xlabel style={font=\color{white!15!black}},
+xlabel={Principal component},
+ymin=0,
+ymax=70,
+ylabel style={font=\color{white!15!black}},
+ylabel={Total variance explained [$\%$]},
+axis background/.style={fill=white},
+legend style={legend cell align=left, align=left, draw=white!15!black}
+]
+\addplot[ybar, bar width=0.178, fill=mycolor1, draw=black, area legend] table[row sep=crcr] {%
+1	53.2162092602587\\
+2	22.6619631313084\\
+3	9.28079305217879\\
+4	7.26503556820729\\
+5	4.36875724319481\\
+6	2.10395515631213\\
+7	1.1032865885399\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0.511111111111111	0\\
+7.48888888888889	0\\
+};
+\addlegendentry{Full year}
+
+\addplot[ybar, bar width=0.178, fill=mycolor2, draw=black, area legend] table[row sep=crcr] {%
+1	48.744077023425\\
+2	22.8973285055946\\
+3	17.6114791437506\\
+4	5.84354467219629\\
+5	2.3164642060038\\
+6	1.94479284762527\\
+7	0.642313601404453\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0.511111111111111	0\\
+7.48888888888889	0\\
+};
+\addlegendentry{Summer}
+
+\addplot[ybar, bar width=0.178, fill=mycolor3, draw=black, area legend] table[row sep=crcr] {%
+1	69.2642429914089\\
+2	15.1221881092441\\
+3	5.83799268596697\\
+4	4.25568482626248\\
+5	3.33273048961998\\
+6	1.35308582154824\\
+7	0.83407507594925\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0.511111111111111	0\\
+7.48888888888889	0\\
+};
+\addlegendentry{Winter}
+
+\end{axis}
+\end{tikzpicture}%
+\end{document}

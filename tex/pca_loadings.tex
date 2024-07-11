@@ -1,0 +1,56 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\documentclass[tikz]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\usepackage{grffile}
+\pgfplotsset{compat=newest}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{arrows.meta}
+\usepgfplotslibrary{patchplots}
+\usepackage{amsmath}
+
+\begin{document}
+\definecolor{mycolor1}{rgb}{0.00000,0.44700,0.74100}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=3.356in,
+height=2.87in,
+at={(0.563in,1.138in)},
+scale only axis,
+bar shift auto,
+xmin=-0.2,
+xmax=9.2,
+xtick={1,2,3,4,5,6,7,8},
+xticklabels={{SIC},{Ice thickness},{Snow thickness},{Floe mean radius},{Ice salinity},{Ice age},{Level ice vol. frac.},{Fractional volume of ridged ice}},
+xticklabel style={rotate=30},
+ymin=0,
+ymax=0.3,
+ylabel style={font=\color{white!15!black}},
+ylabel={Relative loading [-]},
+axis background/.style={fill=white}
+]
+\addplot[ybar, bar width=0.8, fill=mycolor1, draw=black, area legend] table[row sep=crcr] {%
+1	0.0285159887949426\\
+2	0.247869234347145\\
+3	0.108505506348517\\
+4	0.27390533378418\\
+5	0.0754988922392901\\
+6	0.0192526419482046\\
+7	0.0151499382213835\\
+8	0.231302464316338\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+-0.2	0\\
+9.2	0\\
+};
+\end{axis}
+\end{tikzpicture}%
+\end{document}
