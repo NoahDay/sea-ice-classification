@@ -10,3 +10,7 @@
 *.csv
 *.e78257046
 *.o78257046
+.DS_Store
+.texpadtmp/.DS_Store
+data/.DS_Store
+grid/.DS_Store
